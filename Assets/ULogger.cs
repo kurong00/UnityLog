@@ -3,15 +3,32 @@ using UnityEngine;
 using System.Text.RegularExpressions;
 
 
-public class ULogger :MonoBehaviour{
-
-    public static ULogger instance = null;
-    private void Awake()
+public class ULogger : MonoBehaviour{
+    protected static ULogger instance = null;
+    public static ULogger Instance()
     {
-        if (instance != null)
-            Destroy(gameObject);
-        else
-            instance = this;
+        if (instance == null)
+        {
+            instance = FindObjectOfType<ULogger>();
+            if (FindObjectsOfType<ULogger>().Length > 1)
+            {
+                return instance;
+            }
+            if (instance == null)
+            {
+                string instanceName = typeof(ULogger).Name;
+                GameObject instanceGO = GameObject.Find(instanceName);
+                if (instanceGO == null)
+                    instanceGO = new GameObject(instanceName);
+                instance = instanceGO.AddComponent<ULogger>();
+                DontDestroyOnLoad(instanceGO);
+            }
+        }
+        return instance;
+    }
+    protected virtual void OnDestory()
+    {
+        instance = null;
     }
     public void Log(string message,int size)
     {
