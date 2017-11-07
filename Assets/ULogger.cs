@@ -47,7 +47,7 @@ public class ULogger : MonoBehaviour{
 
     public void Log(string message, Color color)
     {
-        Debug.Log("<color=" + RGBToHex(color) + ">" + "aaaaaaaaaa" + "</color>");
+        Debug.Log("<color=" + RGBToHex(color) + ">" + message + "</color>");
     }
 
     public void Log(string message, string color)
@@ -56,11 +56,11 @@ public class ULogger : MonoBehaviour{
         if (color.Length == 6)
         {
             foreach (Match match in Regex.Matches(color, pattern))
-                Debug.Log("<color=#" + color + ">" + "aaaaaaaaaa" + "</color>");
+                Debug.Log("<color=#" + color + ">" + message + "</color>");
         }
         if (color.Length == 7)
         {
-            Debug.Log("<color=" + color + ">" + "aaaaaaaaaa" + "</color>");
+            Debug.Log("<color=" + color + ">" + message + "</color>");
         }
     }
 
