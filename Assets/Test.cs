@@ -1,18 +1,18 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Test : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-        
-        ULogger.Instance().Log("aaaaa", 15, "#ffe000");
-        ULogger.Instance().Log("this", 10);
+    void Start () {
+
+        ULogger.Instance().Log("test", Color.gray);
+        ULogger.Instance().Log("test", 15,Color.gray);
+        ULogger.Instance().Log("test", 15, "FF0000");
     }
 	
-	// Update is called once per frame
+
 	void Update () {
-		
 	}
 }

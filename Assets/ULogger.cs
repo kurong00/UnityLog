@@ -5,6 +5,13 @@ using System.Text.RegularExpressions;
 
 public class ULogger : MonoBehaviour{
     protected static ULogger instance = null;
+
+    public enum LogLevel
+    {
+        Message,
+        Warning,
+        Error,
+    }
     public static ULogger Instance()
     {
         if (instance == null)
@@ -47,7 +54,13 @@ public class ULogger : MonoBehaviour{
 
     public void Log(string message, Color color)
     {
+        
         Debug.Log("<color=" + RGBToHex(color) + ">" + message + "</color>");
+    }
+
+    public void Log(string message, int size,Color color)
+    {
+        Debug.Log("<size=" + size + ">" + "<color=" + RGBToHex(color) + ">" + message + "</color>" + "</size>");
     }
 
     public void Log(string message, string color)
@@ -66,9 +79,9 @@ public class ULogger : MonoBehaviour{
 
     public string RGBToHex(Color color)
     {
-        int R = Convert.ToInt32(color.r);
-        int G = Convert.ToInt32(color.g);
-        int B = Convert.ToInt32(color.b);
+        int R = Convert.ToInt32(color.r * 255);
+        int G = Convert.ToInt32(color.g * 255);
+        int B = Convert.ToInt32(color.b * 255);
         string colorR, colorG, colorB;
         if (R == 0)
             colorR = "00";
