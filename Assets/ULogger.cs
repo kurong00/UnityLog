@@ -44,7 +44,17 @@ public class ULogger : MonoBehaviour{
 
     public void Log(string message, int size,string color)
     {
-        Debug.Log("<size=" + size + ">" + "<color=" + color + ">" + message + "</color>" + "</size>");
+        string pattern = @"^[A-Za-z0-9]+$";
+        if (color.Length == 6)
+        {
+            foreach (Match match in Regex.Matches(color, pattern))
+                Debug.Log("<size=" + size + ">" + "<color=#" + color + ">" + message + "</color>" + "</size>");
+        }
+        if (color.Length == 7)
+        {
+            Debug.Log("<size=" + size + ">" + "<color=" + color + ">" + message + "</color>" + "</size>");
+        }
+        
     }
 
     public void Log(string message)
@@ -65,9 +75,11 @@ public class ULogger : MonoBehaviour{
 
     public void Log(string message, string color)
     {
+       
         string pattern = @"^[A-Za-z0-9]+$";
         if (color.Length == 6)
         {
+            Debug.Log("AAA");
             foreach (Match match in Regex.Matches(color, pattern))
                 Debug.Log("<color=#" + color + ">" + message + "</color>");
         }
