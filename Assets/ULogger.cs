@@ -6,12 +6,7 @@ using System.Text.RegularExpressions;
 public class ULogger : MonoBehaviour{
     protected static ULogger instance = null;
 
-    public enum LogLevel
-    {
-        Message,
-        Warning,
-        Error,
-    }
+    
     public static ULogger Instance()
     {
         if (instance == null)
