@@ -79,7 +79,6 @@ public class ULogger : MonoBehaviour{
         string pattern = @"^[A-Za-z0-9]+$";
         if (color.Length == 6)
         {
-            Debug.Log("AAA");
             foreach (Match match in Regex.Matches(color, pattern))
                 Debug.Log("<color=#" + color + ">" + message + "</color>");
         }
@@ -88,27 +87,25 @@ public class ULogger : MonoBehaviour{
             Debug.Log("<color=" + color + ">" + message + "</color>");
         }
     }
+    
 
     public string RGBToHex(Color color)
     {
         int R = Convert.ToInt32(color.r * 255);
         int G = Convert.ToInt32(color.g * 255);
         int B = Convert.ToInt32(color.b * 255);
-        string colorR, colorG, colorB;
-        if (R == 0)
-            colorR = "00";
-        if (G == 0)
-            colorG = "00";
-        if (B == 0)
-            colorB = "00";
-        colorR = Convert.ToString(R, 16);
-        colorG = Convert.ToString(G, 16);
-        colorB = Convert.ToString(B, 16);
+        string colorR = "00", colorG = "00", colorB = "00";
+        if (R != 0)
+            colorR = Convert.ToString(R, 16);
+        if (G != 0)
+            colorG = Convert.ToString(G, 16);
+        if (B != 0)
+            colorB = Convert.ToString(B, 16);
         string HexColor = "#" + colorR + colorG + colorB;
         return HexColor;
     }
 
-    public Color HexToRGB(string hex)
+    /*public Color HexToRGB(string hex)
     {
         Color color = new Color();
         char[] chars = hex.ToCharArray();
@@ -130,5 +127,5 @@ public class ULogger : MonoBehaviour{
             return color;
         }
         return color;
-    }
+    }*/
 }
