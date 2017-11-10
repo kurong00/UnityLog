@@ -10,7 +10,7 @@ public enum LogLevel
 }
 public class LogInformation {
 
-    List<FrameStack> FrameStackList;
+    List<ULogStackFrame> FrameStackList;
     string Message;
     double RelativeTimeLine;
     double AbsoluteTimeLine;
