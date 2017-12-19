@@ -5,13 +5,13 @@ using System;
 using System.Diagnostics;
 
 [Serializable]
-public class ULogStackFrame  {
+public class LogStackFrame  {
 
     public string MethodName;
     public string DeclaringType;
     public int LineNumber;
 
-    public ULogStackFrame(StackFrame stackFrame)
+    public LogStackFrame(StackFrame stackFrame)
     {
         var name = stackFrame.GetMethod();
     }
