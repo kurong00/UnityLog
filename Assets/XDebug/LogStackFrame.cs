@@ -10,9 +10,12 @@ public class LogStackFrame  {
     public string MethodName;
     public string DeclaringType;
     public int LineNumber;
+    public string FileName;
 
     public LogStackFrame(StackFrame stackFrame)
     {
-        var name = stackFrame.GetMethod();
+        var method = stackFrame.GetMethod();
+        MethodName = method.Name;
+
     }
 }
