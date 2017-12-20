@@ -8,11 +8,16 @@ public enum LogLevel
     Warning,
     Error,
 }
-public class LogInformation {
+public class LogInformation
+{
 
-    List<LogStackFrame> FrameStackList;
+    Object Origin;
+    string Channel;
+    List<LogStackFrame> StackFrameList;
+    LogLevel logLevel;
+
     string Message;
     double RelativeTimeLine;
     double AbsoluteTimeLine;
-    LogLevel logLevel;
+    
 }
