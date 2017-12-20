@@ -31,4 +31,12 @@ public class LogStackFrame  {
         FileName = stackFrame.GetFileName();
         LineNumber = stackFrame.GetFileLineNumber();
     }
+
+    public LogStackFrame(string message,string filename,int linenumber)
+    {
+        FileName = filename;
+        LineNumber = linenumber;
+        ParameterMsg.Append(message);
+    }
+    
 }
