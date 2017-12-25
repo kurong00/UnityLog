@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System;
-using System.Reflection;
-using System.Text.RegularExpressions;
-
 public enum LogLevel
 {
     Message,
