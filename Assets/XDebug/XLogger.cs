@@ -67,10 +67,14 @@ public static class XLogger
                 }
                 LogStackFrame orginStackFrame;
                 List<LogStackFrame> stackFrames = new List<LogStackFrame>();
-                if(stackFrames.Count == 0)
+                //change!
+                GetStackFrameFromeUnity(unityStackFrame, out orginStackFrame);
+                if (stackFrames.Count == 0)
                 {
                     stackFrames = GetStackFrameFromeUnity(unityStackFrame, out orginStackFrame);
                 }
+                var logInformation = new LogInformation(null, "", logLevel, stackFrames,
+                    orginStackFrame, message: unityLogMessage);
             }
         }
     }
