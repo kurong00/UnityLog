@@ -17,6 +17,9 @@ public interface IFilter
 
 [AttributeUsage(AttributeTargets.Method)]
 public class ExcludeStackTrace : Attribute { }
+
+[AttributeUsage(AttributeTargets.Method)]
+public class OnlyUnityLog : Attribute { }
 public static class XLogger
 {
     public static int MaxMessage = 500;
@@ -36,7 +39,7 @@ public static class XLogger
     }
 
     [ExcludeStackTrace]
-    static void UnityLogHandler(string logString, string stackTrace, LogType logType)
+    static void UnityLogHandler(string unityLogMessage, string unityStackFrame, LogType logType)
     {
         lock (LoggerList)
         {
@@ -62,7 +65,33 @@ public static class XLogger
                         logLevel = LogLevel.Message;
                         break;
                 }
+                LogStackFrame orginStackFrame;
+                List<LogStackFrame> stackFrames = new List<LogStackFrame>();
+                if(stackFrames.Count == 0)
+                {
+                    stackFrames = GetStackFrameFromeUnity(unityStackFrame, out orginStackFrame);
+                }
             }
         }
+    }
+
+    static List<LogStackFrame> GetStackFrameFromeUnity(string unityStackFrame,out LogStackFrame orginStackFrame)
+    {
+        var newLines = Regex.Split(unityStackFrame, UnityNewLine);
+        List<LogStackFrame> stackFrames = new List<LogStackFrame>();
+        foreach(var line in newLines)
+        {
+            var frame = new LogStackFrame(line);
+            if (!string.IsNullOrEmpty(frame.FormatMethodNameByFile))
+            {
+                //change!
+                stackFrames.Add(frame);
+            }
+        }
+        if (stackFrames.Count > 0)
+            orginStackFrame = stackFrames[0];
+        else
+            orginStackFrame = null;
+        return stackFrames;
     }
 }
