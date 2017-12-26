@@ -21,7 +21,7 @@ public class LogInformation
     double AbsoluteTimeLine;
 
     public LogInformation(UnityEngine.Object origin,string channel,LogLevel level,
-        List<LogStackFrame> stackFrameList,LogStackFrame logStackFrame, System.Object message)
+        List<LogStackFrame> stackFrameList,LogStackFrame logStackFrame, object message)
     {
         OriginObject = origin;
         Channel = channel;

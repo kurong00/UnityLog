@@ -12,7 +12,8 @@ public interface ILogger
 
 public interface IFilter
 {
-
+    bool ApplyFilter(UnityEngine.Object origin, LogLevel logLevel,
+        string channel, System.Object message, params object[] paramsObject);
 }
 
 [AttributeUsage(AttributeTargets.Method)]
@@ -84,21 +85,24 @@ public static class XLogger
                         stackFrames.Insert(0, new LogStackFrame(unityLogMessage, fileName, lineNumber));
                     }
                     var logInformation = new LogInformation(null, "", logLevel, stackFrames,
-                        orginStackFrame, message: unityLogMessage);
+                        orginStackFrame, unityLogMessage);
                     RecentMessages.AddLast(logInformation);
                     while (RecentMessages.Count > MaxMessage)
                     {
                         RecentMessages.RemoveFirst();
                     }
-                    /*foreach(var logs in LoggerList)
+                    ///TODO
+                    ///
+                    ///LoggerList.RemoveAll(l => l == null);
+                    ///LoggerList.ForEach(l => l.Log(logInformation));
+                    ///
+                    foreach (ILogger logs in LoggerList)
                     {
                         if (logs == null)
                             LoggerList.Remove(logs);
-                    }*/
-                    ///TODO
-                    ///
-                    LoggerList.RemoveAll(l => l == null);
-                    LoggerList.ForEach(l => l.Log(logInformation));
+                        else
+                            logs.Log(logInformation);
+                    }
                 }
                 finally
                 {
@@ -110,11 +114,49 @@ public static class XLogger
 
     [ExcludeStackTrace]
     static public void Log(UnityEngine.Object origin, LogLevel logLevel,
-        string Channel,System.Object message,params object[] paramsObject)
+        string channel,object message,params object[] paramsObject)
     {
         lock (LoggerList)
         {
-
+            if (!Logged)
+            {
+                try
+                {
+                    Logged = true;
+                    foreach(IFilter filter in FilterList)
+                    {
+                        if (!filter.ApplyFilter(origin, logLevel, channel, message, paramsObject))
+                            return;
+                    }
+                    LogStackFrame orginStackFrame;
+                    List<LogStackFrame> stackFrames = new List<LogStackFrame>();
+                    bool OnlyUnityLog = GetStackFramListFromUnity(ref stackFrames, out orginStackFrame);
+                    if (OnlyUnityLog)
+                        return;
+                    var logInformation = new LogInformation(origin,channel,logLevel,
+                        stackFrames,orginStackFrame,message);
+                    RecentMessages.AddLast(logInformation);
+                    while (RecentMessages.Count > MaxMessage)
+                    {
+                        RecentMessages.RemoveFirst();
+                    }
+                    foreach (ILogger logs in LoggerList)
+                    {
+                        if (logs == null)
+                            LoggerList.Remove(logs);
+                        else
+                            logs.Log(logInformation);
+                    }
+                    if (UseBothSystem)
+                    {
+                        ForwardToUnity(origin, logLevel, message, paramsObject);
+                    }
+                }
+                finally
+                {
+                    Logged = false;
+                }
+            }
         }
     }
 
@@ -194,5 +236,8 @@ public static class XLogger
         return false;
     }
 
+    static void ForwardToUnity(UnityEngine.Object source, LogLevel severity, object message, params object[] par)
+    {
 
-}
+
+    }
