@@ -76,11 +76,11 @@ public static class XLogger
                     bool OnlyUnityLog = GetStackFramListFromUnity(ref stackFrames, out orginStackFrame);
                     if (OnlyUnityLog)
                         return;
-                    if(stackFrames.Count ==0)
+                    if (stackFrames.Count == 0)
                         stackFrames = GetStackFrameFromeUnity(unityStackFrame, out orginStackFrame);
                     string fileName = "";
                     int lineNumber = 0;
-                    if(ExtractInformationFromUnityLog(unityLogMessage,ref fileName,ref lineNumber))
+                    if (ExtractInformationFromUnityLog(unityLogMessage, ref fileName, ref lineNumber))
                     {
                         stackFrames.Insert(0, new LogStackFrame(unityLogMessage, fileName, lineNumber));
                     }
@@ -114,7 +114,7 @@ public static class XLogger
 
     [ExcludeStackTrace]
     static public void Log(UnityEngine.Object origin, LogLevel logLevel,
-        string channel,object message,params object[] paramsObject)
+        string channel, object message, params object[] paramsObject)
     {
         lock (LoggerList)
         {
@@ -123,7 +123,7 @@ public static class XLogger
                 try
                 {
                     Logged = true;
-                    foreach(IFilter filter in FilterList)
+                    foreach (IFilter filter in FilterList)
                     {
                         if (!filter.ApplyFilter(origin, logLevel, channel, message, paramsObject))
                             return;
@@ -133,8 +133,8 @@ public static class XLogger
                     bool OnlyUnityLog = GetStackFramListFromUnity(ref stackFrames, out orginStackFrame);
                     if (OnlyUnityLog)
                         return;
-                    var logInformation = new LogInformation(origin,channel,logLevel,
-                        stackFrames,orginStackFrame,message);
+                    var logInformation = new LogInformation(origin, channel, logLevel,
+                        stackFrames, orginStackFrame, message);
                     RecentMessages.AddLast(logInformation);
                     while (RecentMessages.Count > MaxMessage)
                     {
@@ -160,11 +160,11 @@ public static class XLogger
         }
     }
 
-    static List<LogStackFrame> GetStackFrameFromeUnity(string unityStackFrame,out LogStackFrame orginStackFrame)
+    static List<LogStackFrame> GetStackFrameFromeUnity(string unityStackFrame, out LogStackFrame orginStackFrame)
     {
         var newLines = Regex.Split(unityStackFrame, UnityNewLine);
         List<LogStackFrame> stackFrames = new List<LogStackFrame>();
-        foreach(var line in newLines)
+        foreach (var line in newLines)
         {
             var frame = new LogStackFrame(line);
             if (!string.IsNullOrEmpty(frame.FormatMethodNameByFile))
@@ -180,7 +180,7 @@ public static class XLogger
         return stackFrames;
     }
 
-    static bool GetStackFramListFromUnity(ref List<LogStackFrame> stackFrameList,out LogStackFrame orginStackFrame)
+    static bool GetStackFramListFromUnity(ref List<LogStackFrame> stackFrameList, out LogStackFrame orginStackFrame)
     {
         stackFrameList.Clear();
         orginStackFrame = null;
@@ -201,7 +201,7 @@ public static class XLogger
                     isShowed = true;
                 else
                     isShowed = false;
-                if(mode == UnityMethod.MethodMode.ShowFirst)
+                if (mode == UnityMethod.MethodMode.ShowFirst)
                 {
                     if (!MeetFirstIgnoredMethod)
                     {
@@ -211,7 +211,7 @@ public static class XLogger
                     else
                         mode = UnityMethod.MethodMode.Hide;
                 }
-                if(mode == UnityMethod.MethodMode.Show)
+                if (mode == UnityMethod.MethodMode.Show)
                 {
                     LogStackFrame logStackFrame = new LogStackFrame(tempStackFrame);
                     stackFrameList.Add(logStackFrame);
@@ -236,8 +236,47 @@ public static class XLogger
         return false;
     }
 
-    static void ForwardToUnity(UnityEngine.Object source, LogLevel severity, object message, params object[] par)
+    static void ForwardToUnity(UnityEngine.Object source, LogLevel severity, object message, params object[] paramsObject)
     {
-
+        object showObject = null;
+        if (message != null)
+        {
+            var messageAsString = message as string;
+            if (messageAsString != null)
+            {
+                if (paramsObject.Length > 0)
+                {
+                    showObject = String.Format(messageAsString, paramsObject);
+                }
+                else
+                {
+                    showObject = message;
+                }
+            }
+            else
+            {
+                showObject = message;
+            }
+        }
+        if (source == null)
+        {
+            if (severity == LogLevel.Message)
+                UnityEngine.Debug.Log(showObject);
+            if (severity == LogLevel.Warning)
+                UnityEngine.Debug.LogWarning(showObject);
+            if (severity == LogLevel.Error)
+                UnityEngine.Debug.LogError(showObject);
+        }
+        else
+        {
+            if (severity == LogLevel.Message)
+                UnityEngine.Debug.Log(showObject, source);
+            if (severity == LogLevel.Warning)
+                UnityEngine.Debug.LogWarning(showObject, source);
+            if (severity == LogLevel.Error)
+                UnityEngine.Debug.LogError(showObject, source);
+        }
 
     }
+
+}

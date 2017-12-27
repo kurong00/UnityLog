@@ -20,8 +20,8 @@ public class LogInformation
     double RelativeTimeLine;
     double AbsoluteTimeLine;
 
-    public LogInformation(UnityEngine.Object origin,string channel,LogLevel level,
-        List<LogStackFrame> stackFrameList,LogStackFrame logStackFrame, object message)
+    public LogInformation(UnityEngine.Object origin,string channel,LogLevel level,List<LogStackFrame> stackFrameList,
+        LogStackFrame logStackFrame, object message, params object[] paramsObject)
     {
         OriginObject = origin;
         Channel = channel;
@@ -30,7 +30,19 @@ public class LogInformation
         var formatMessage = message as String;
         if(formatMessage != null)
         {
-            Message = formatMessage;
+            if (paramsObject.Length > 0)
+            {
+                Message = System.String.Format(formatMessage, paramsObject);
+            }
+            else
+            {
+                Message = formatMessage;
+            }
+        }
+        else
+        {
+            if (message != null)
+                Message = message.ToString();
         }
         OriginStackFrame = logStackFrame;
     }
