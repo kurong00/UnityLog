@@ -11,10 +11,10 @@ public enum LogLevel
 public class LogInformation
 {
     UnityEngine.Object OriginObject;
-    string Channel;
+    public string Channel;
     List<LogStackFrame> StackFrameList;
     LogStackFrame OriginStackFrame;
-    LogLevel LogLevel;
+    public LogLevel LogLevel;
 
     string Message;
     double RelativeTimeLine;

@@ -10,6 +10,11 @@ public interface ILogger
     void Log(LogInformation log);
 }
 
+public interface ILoggerWindow
+{
+    void LogWindow(LogInformation log);
+}
+
 public interface IFilter
 {
     bool ApplyFilter(UnityEngine.Object origin, LogLevel logLevel,
@@ -24,7 +29,7 @@ public class OnlyUnityLog : Attribute { }
 public static class XLogger
 {
     public static int MaxMessage = 500;
-    public static bool UseBothSystem = true;
+    public static bool UseBothSystem = false;
     public static string UnityNewLine = "/n";
     public static char DirectorySeparator = '/';
 
@@ -149,7 +154,7 @@ public static class XLogger
                     }
                     if (UseBothSystem)
                     {
-                        ForwardToUnity(origin, logLevel, message, paramsObject);
+                        PushBackToUnity(origin, logLevel, message, paramsObject);
                     }
                 }
                 finally
@@ -236,7 +241,7 @@ public static class XLogger
         return false;
     }
 
-    static void ForwardToUnity(UnityEngine.Object source, LogLevel severity, object message, params object[] paramsObject)
+    static void PushBackToUnity(UnityEngine.Object source, LogLevel severity, object message, params object[] paramsObject)
     {
         object showObject = null;
         if (message != null)
