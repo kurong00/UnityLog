@@ -23,7 +23,7 @@ public class XLoggerEditorWindow : EditorWindow, ILoggerWindow
     
     void OnEnable()
     {
-        titleContent.text = "XLogConsole";
+        titleContent.text = XLogGUIConstans.XLOG_EDITOR_NAME;
         if (!EditorLog)
         {
             EditorLog = XLogger.GetLogger<XLoggerEditor>();
@@ -37,9 +37,9 @@ public class XLoggerEditorWindow : EditorWindow, ILoggerWindow
 
         ///Use Unity Editor Built-in Icons
         ///http://unitylist.com/r/dba/unity-editor-icons
-        ErrorIcon = EditorGUIUtility.FindTexture("sv_icon_name6");
-        WarningIcon = EditorGUIUtility.FindTexture("sv_icon_name4");
-        MessageIcon = EditorGUIUtility.FindTexture("sv_icon_name0");
+        ErrorIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_ERROR);
+        WarningIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_WARNING);
+        MessageIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_MESSAGE);
         DrawPos = Vector2.zero;
         Repaint();
     }
@@ -50,7 +50,6 @@ public class XLoggerEditorWindow : EditorWindow, ILoggerWindow
         LogStyle = new GUIStyle("CN StatusWarn");
         LogStyle.fixedHeight = XLogGUIConstans.XLOG_DETAIL_LINE_HEIGHT;
         OnGUIToolBar();
-
     }
     void OnGUIToolBar()
     {
@@ -58,9 +57,15 @@ public class XLoggerEditorWindow : EditorWindow, ILoggerWindow
         Vector2 btnSize;
         if (XLogGUIFunc.AdaptingButton(XLogGUIConstans.XLOG_TOOLBAR_BUTTON_CLEAR, 
             EditorStyles.toolbarButton,DrawPos, out btnSize))
-        {
             EditorLog.ClearHistoryLogs();
-        }
+        DrawPos.x += btnSize.x;
+        EditorLog.ClearOnPlay = XLogGUIFunc.AdaptingToggle(EditorLog.ClearOnPlay,
+            XLogGUIConstans.XLOG_TOOLBAR_BUTTON_CLEAR_ON_PLAY, EditorStyles.toolbarButton, DrawPos,out btnSize);
+        DrawPos.x += btnSize.x;
+        EditorLog.ErrorPause = XLogGUIFunc.AdaptingToggle(EditorLog.ErrorPause,
+            XLogGUIConstans.XLOG_TOOLBAR_BUTTON_ERROR_PAUSE, EditorStyles.toolbarButton,DrawPos,out btnSize);
+        DrawPos.x += btnSize.x;
+        Debug.Log("111")
     }
     public void LogWindow(LogInformation log)
     {
