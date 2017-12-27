@@ -241,6 +241,37 @@ public static class XLogger
         return false;
     }
 
+    static public T GetLogger<T>() where T : class
+    {
+        foreach (var logger in LoggerList)
+        {
+            if (logger is T)
+            {
+                return logger as T;
+            }
+        }
+        return null;
+    }
+
+    static public void AddLogger(ILogger logger, bool populateWithExistingMessages = true)
+    {
+        lock (LoggerList)
+        {
+            if (populateWithExistingMessages)
+            {
+                foreach (var oldLog in RecentMessages)
+                {
+                    logger.Log(oldLog);
+                }
+            }
+
+            if (!LoggerList.Contains(logger))
+            {
+                LoggerList.Add(logger);
+            }
+        }
+    }
+
     static void PushBackToUnity(UnityEngine.Object source, LogLevel severity, object message, params object[] paramsObject)
     {
         object showObject = null;

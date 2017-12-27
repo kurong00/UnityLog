@@ -75,7 +75,9 @@ public class LogStackFrame  {
     {
         FileName = filename;
         LineNumber = linenumber;
-        ParameterMsg.Append(message);
+        FormatFileName = message;
+        FormatMethodName = message;
+        FormatMethodNameByFile = message;
     }
 
     public LogStackFrame(string unityStackFrame)

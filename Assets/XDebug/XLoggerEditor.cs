@@ -17,7 +17,7 @@ public class XLoggerEditor : ScriptableObject, ILogger
     public int Warnings;
     public int Messages;
 
-    static public XLoggerEditor Create()
+    static public XLoggerEditor Ctor()
     {
         XLoggerEditor xLoggerEditor = ScriptableObject.FindObjectOfType<XLoggerEditor>();
         if (xLoggerEditor == null)
@@ -44,7 +44,7 @@ public class XLoggerEditor : ScriptableObject, ILogger
         Playing = EditorApplication.isPlayingOrWillChangePlaymode;
     }
 
-    void ClearHistoryLogs()
+    public void ClearHistoryLogs()
     {
         LogInformationList.Clear();
         Channels.Clear();
