@@ -23,6 +23,19 @@ static public class XLogGUIConstans
     static public readonly string XLOG_ICON_MESSAGE = "sv_icon_name0";
 }
 
+
+public class MarkedLog
+{
+    public LogInformation Log = null;
+    public int Marked = 1;
+    public MarkedLog(LogInformation log,int marked = 1)
+    {
+        Log = log;
+        Marked = marked;
+    }
+}
+
+
 static public class XLogGUIFunc
 {
     static public bool AdaptingButton(string text, GUIStyle style, Vector2 drawPos, out Vector2 size)

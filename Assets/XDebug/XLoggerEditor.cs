@@ -73,7 +73,7 @@ public class XLoggerEditor : ScriptableObject, ILogger
         {
             Errors++;
         }
-        else if (log.LogLevel == LogLevel.Warning)
+        if (log.LogLevel == LogLevel.Warning)
         {
             Warnings++;
         }
@@ -98,6 +98,22 @@ public class XLoggerEditor : ScriptableObject, ILogger
         if (!Windows.Contains(window))
         {
             Windows.Add(window);
+        }
+    }
+
+    public List<LogInformation> CopyLogInformationList()
+    {
+        lock (this)
+        {
+            return new List<LogInformation>(LogInformationList);
+        }
+    }
+
+    public HashSet<string> CopyChannels()
+    {
+        lock (this)
+        {
+            return new HashSet<string>(Channels);
         }
     }
 }

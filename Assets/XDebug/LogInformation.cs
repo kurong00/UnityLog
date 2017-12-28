@@ -16,8 +16,19 @@ public class LogInformation
     LogStackFrame OriginStackFrame;
     public LogLevel LogLevel;
 
-    string Message;
-    double RelativeTimeLine;
+    public string Message;
+    double relativeTimeLine;
+    public double RelativeTimeLine
+    {
+        get
+        {
+            return relativeTimeLine;
+        }
+        set
+        {
+            relativeTimeLine = value;
+        }
+    }
     double AbsoluteTimeLine;
 
     public LogInformation(UnityEngine.Object origin,string channel,LogLevel level,List<LogStackFrame> stackFrameList,
@@ -44,6 +55,9 @@ public class LogInformation
             if (message != null)
                 Message = message.ToString();
         }
+        RelativeTimeLine = XLogger.GetRelativeTime();
         OriginStackFrame = logStackFrame;
     }
+    
+
 }

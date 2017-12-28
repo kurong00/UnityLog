@@ -31,7 +31,7 @@ public static class XLogger
     public static int MaxMessage = 500;
     public static bool UseBothSystem = false;
     public static string UnityNewLine = "/n";
-    public static char DirectorySeparator = '/';
+    public static string DirectorySeparator = "/";
 
     static List<ILogger> LoggerList = new List<ILogger>();
     static List<IFilter> FilterList = new List<IFilter>();
@@ -315,4 +315,9 @@ public static class XLogger
 
     }
 
+    static public double GetRelativeTime()
+    {
+        long ticks = DateTime.Now.Ticks;
+        return TimeSpan.FromTicks(ticks - StartTimeTicks).TotalSeconds;
+    }
 }
