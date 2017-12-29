@@ -10,9 +10,9 @@ public enum LogLevel
 [Serializable]
 public class LogInformation
 {
-    UnityEngine.Object OriginObject;
+    public UnityEngine.Object OriginObject;
     public string Channel;
-    List<LogStackFrame> StackFrameList;
+    public List<LogStackFrame> StackFrameList;
     LogStackFrame OriginStackFrame;
     public LogLevel LogLevel;
 

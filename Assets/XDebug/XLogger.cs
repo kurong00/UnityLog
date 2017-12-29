@@ -31,7 +31,7 @@ public static class XLogger
     public static int MaxMessage = 500;
     public static bool UseBothSystem = false;
     public static string UnityNewLine = "/n";
-    public static string DirectorySeparator = "/";
+    public static char DirectorySeparator = '/';
 
     static List<ILogger> LoggerList = new List<ILogger>();
     static List<IFilter> FilterList = new List<IFilter>();
@@ -319,5 +319,10 @@ public static class XLogger
     {
         long ticks = DateTime.Now.Ticks;
         return TimeSpan.FromTicks(ticks - StartTimeTicks).TotalSeconds;
+    }
+
+    static public string ConvertDirectorySeparatorsFromUnityToOS(string unityFileName)
+    {
+        return unityFileName.Replace(DirectorySeparator, System.IO.Path.DirectorySeparatorChar);
     }
 }
