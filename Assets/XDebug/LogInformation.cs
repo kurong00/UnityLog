@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 public enum LogLevel
 {
@@ -31,7 +30,7 @@ public class LogInformation
     }
     double AbsoluteTimeLine;
 
-    public LogInformation(UnityEngine.Object origin,string channel,LogLevel level,List<LogStackFrame> stackFrameList,
+    public LogInformation(UnityEngine.Object origin, string channel, LogLevel level, List<LogStackFrame> stackFrameList,
         LogStackFrame logStackFrame, object message, params object[] paramsObject)
     {
         OriginObject = origin;
@@ -39,7 +38,7 @@ public class LogInformation
         LogLevel = level;
         StackFrameList = stackFrameList;
         var formatMessage = message as String;
-        if(formatMessage != null)
+        if (formatMessage != null)
         {
             if (paramsObject.Length > 0)
             {
@@ -58,6 +57,6 @@ public class LogInformation
         RelativeTimeLine = XLogger.GetRelativeTime();
         OriginStackFrame = logStackFrame;
     }
-    
+
 
 }

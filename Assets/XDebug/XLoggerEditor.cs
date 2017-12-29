@@ -26,7 +26,7 @@ public class XLoggerEditor : ScriptableObject, ILogger
         xLoggerEditor.Warnings = 0;
         xLoggerEditor.Messages = 0;
         xLoggerEditor.ErrorPause = false;
-        xLoggerEditor.ClearOnPlay = true;
+        xLoggerEditor.ClearOnPlay = false;
         xLoggerEditor.Playing = false;
         return xLoggerEditor;
     }
@@ -39,8 +39,9 @@ public class XLoggerEditor : ScriptableObject, ILogger
     void ClearLogsOnPlay(PlayModeStateChange state)
     {
         ///TODO
-        if (!Playing && EditorApplication.isPlayingOrWillChangePlaymode && ClearOnPlay)
-            ClearHistoryLogs();
+        if (!Playing && EditorApplication.isPlayingOrWillChangePlaymode)
+            if (ClearOnPlay)
+                ClearHistoryLogs();
         Playing = EditorApplication.isPlayingOrWillChangePlaymode;
     }
 
@@ -73,7 +74,7 @@ public class XLoggerEditor : ScriptableObject, ILogger
         {
             Errors++;
         }
-        if (log.LogLevel == LogLevel.Warning)
+        else if (log.LogLevel == LogLevel.Warning)
         {
             Warnings++;
         }

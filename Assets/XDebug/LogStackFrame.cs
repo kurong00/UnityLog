@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using System;
 using System.Text;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 [Serializable]
-public class LogStackFrame  {
+public class LogStackFrame
+{
 
     public string MethodName;
     public string DeclaringType;
@@ -71,7 +69,7 @@ public class LogStackFrame  {
         FormatNames();
     }
 
-    public LogStackFrame(string message,string filename,int linenumber)
+    public LogStackFrame(string message, string filename, int linenumber)
     {
         FileName = filename;
         LineNumber = linenumber;
@@ -106,7 +104,7 @@ public class LogStackFrame  {
         if (!string.IsNullOrEmpty(tempFileName))
         {
             int index = FileName.IndexOf("Assets", StringComparison.OrdinalIgnoreCase);
-            if(index > 0)
+            if (index > 0)
             {
                 tempFileName = FileName.Substring(index);
             }
@@ -114,20 +112,4 @@ public class LogStackFrame  {
         FormatFileName = string.Format("{0}:{1}", tempFileName, LineNumber);
         FormatMethodNameByFile = string.Format("{0} : from {1}", FormatMethodName, formatFileName);
     }
-    
-    /*bool GetInformationFromUnityStackFrame(string unityLog,ref string methodName,ref string declaringType,
-        ref string fileName,ref int lineNumber)
-    {
-        var regex = Regex.Matches(unityLog, @"(.*)\.(.*)\s*\(.*\(at (.*):(\d+)");
-        if (regex.Count > 0)
-        {
-            declaringType = regex[0].Groups[1].Value;
-            methodName = regex[0].Groups[2].Value;
-            fileName = regex[0].Groups[3].Value;
-            lineNumber = Convert.ToInt32(regex[0].Groups[4].Value);
-            return true;
-        }
-        else
-            return false;
-    }*/
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 public interface ILogger
@@ -29,7 +28,6 @@ public class OnlyUnityLog : Attribute { }
 public static class XLogger
 {
     public static int MaxMessage = 500;
-    public static bool UseBothSystem = false;
     public static string UnityNewLine = "/n";
     public static char DirectorySeparator = '/';
 
@@ -96,11 +94,6 @@ public static class XLogger
                     {
                         RecentMessages.RemoveFirst();
                     }
-                    ///TODO
-                    ///
-                    ///LoggerList.RemoveAll(l => l == null);
-                    ///LoggerList.ForEach(l => l.Log(logInformation));
-                    ///
                     foreach (ILogger logs in LoggerList)
                     {
                         if (logs == null)
@@ -152,7 +145,7 @@ public static class XLogger
                         else
                             logs.Log(logInformation);
                     }
-                    if (UseBothSystem)
+                    if (XLogGUIConstans.XLOG_ADD_UNITY_LOG_SYSTEM)
                     {
                         PushBackToUnity(origin, logLevel, message, paramsObject);
                     }
