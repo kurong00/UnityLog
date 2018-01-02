@@ -3,7 +3,6 @@ public class Test : MonoBehaviour
 {
     void Start()
     {
-        XLogger.AddLogger(new XLogFile("MyLog"));
         XDebug.Log("XLoger Message");
         XDebug.Log("XLoger Message");
         XDebug.Log("XLoger Message");
