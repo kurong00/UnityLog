@@ -35,8 +35,8 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
     Rect CursorChangeRect;
     float CurrentTopPaneHeight;
     Color SizerLineColour;
-    GUIStyle EntryStyleBackEven;
-    GUIStyle EntryStyleBackOdd;
+    GUIStyle LogLineStyleOne;
+    GUIStyle LogLineStyleTwo;
     string CurrentChannel = null;
     string FilterRegex = null;
     bool ShowErrors = true;
@@ -59,14 +59,10 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
         XLogger.AddLogger(EditorLog);
         EditorLog.AddWindow(this);
         titleContent.text = XLogGUIConstans.XLOG_EDITOR_NAME;
-
         ClearSelectedMessage();
-        ///Use Unity Editor Built-in Icons
-        ///http://unitylist.com/r/dba/unity-editor-icons
         ErrorIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_ERROR);
         WarningIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_WARNING);
         MessageIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_MESSAGE);
-
         DrawPos = Vector2.zero;
         CurrentTopPaneHeight = position.height / 2;
         DirtyLog = true;
@@ -77,15 +73,11 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
     Vector2 DrawPos = Vector2.zero;
     public void OnGUI()
     {
-        ///
-        ///https://gist.github.com/MadLittleMods/ea3e7076f0f59a702ecb
-        EntryStyleBackEven = new GUIStyle("CN StatusWarn");
-        EntryStyleBackEven.normal = new GUIStyle("CN EntryBackEven").normal;
-        EntryStyleBackEven.margin = new RectOffset(5, 10, 5, 10);
-        EntryStyleBackEven.border = new RectOffset(5, 0, 5, 0);
-        EntryStyleBackEven.fixedHeight = 20;
-        EntryStyleBackOdd = new GUIStyle(EntryStyleBackEven);
-        EntryStyleBackOdd.normal = new GUIStyle("CN EntryBackOdd").normal;
+        LogLineStyleOne = new GUIStyle(XLogGUIConstans.XLOG_STYLE_LOG_LINE_ONE);
+        LogLineStyleOne.normal = new GUIStyle(XLogGUIConstans.XLOG_STYLE_LOG_LINE_TWO).normal;
+        LogLineStyleOne.fixedHeight = 20;
+        LogLineStyleTwo = new GUIStyle(LogLineStyleOne);
+        LogLineStyleTwo.normal = new GUIStyle(XLogGUIConstans.XLOG_STYLE_LOG_LINE_THREE).normal;
         if (DirtyLog)
             CurrentLogList = EditorLog.CopyLogInformationList();
         GUILayout.BeginVertical();
@@ -99,7 +91,7 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
             }
             float logPanelHeight = CurrentTopPaneHeight + DrawPos.y;
             OnGUILogList(logPanelHeight);
-            DrawPos.y += XLogGUIConstans.XLOG_DIVIDER_HEIGHT;
+            DrawPos.y += 10;
             DrawLogDetails();
         }
         GUILayout.EndVertical();
@@ -177,9 +169,10 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
         string filterRegex = null;
         GUILayout.BeginHorizontal();
         {
-            GUILayout.Label("Filter : ", GUILayout.Width(40));
+            GUILayout.Label(XLogGUIConstans.XLOG_TOOLBAR_LABLE_FILTER, GUILayout.Width(40));
             filterRegex = GUILayout.TextField(FilterRegex);
-            if (GUILayout.Button("Clear", EditorStyles.miniButtonRight, GUILayout.Width(50)))
+            if (GUILayout.Button(XLogGUIConstans.XLOG_TOOLBAR_BUTTON_CLEAR,
+                EditorStyles.miniButtonRight, GUILayout.Width(50)))
             {
                 GUIUtility.keyboardControl = 0;
                 GUIUtility.hotControl = 0;
@@ -230,7 +223,7 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
             filterRegex = new Regex(FilterRegex);
         }
         var collapseBadgeStyle = EditorStyles.miniButton;
-        var logLineStyle = EntryStyleBackEven;
+        var logLineStyle = LogLineStyleOne;
         if (DirtyLog)
         {
             LogListMaxWidth = 0;
@@ -315,7 +308,7 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
             var markedLog = RenderLogs[renderLogIndex];
             var log = markedLog.Log;
 
-            logLineStyle = (renderLogIndex % 2 == 0) ? EntryStyleBackEven : EntryStyleBackOdd;
+            logLineStyle = (renderLogIndex % 2 == 0) ? LogLineStyleOne : LogLineStyleTwo;
 
             if (renderLogIndex == SelectedRenderLog)
             {
@@ -419,7 +412,7 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
         {
             var selectedLog = RenderLogs[SelectedRenderLog];
             var log = selectedLog.Log;
-            var logLineStyle = EntryStyleBackEven;
+            var logLineStyle = LogLineStyleOne;
             var sourceStyle = new GUIStyle(GUI.skin.textArea);
             sourceStyle.richText = true;
             var drawRect = new Rect(DrawPos, new Vector2(position.width - DrawPos.x, position.height - DrawPos.y));
@@ -462,7 +455,7 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
                 var lineContent = detailLines[i];
                 if (lineContent != null)
                 {
-                    logLineStyle = (i % 2 == 0) ? EntryStyleBackEven : EntryStyleBackOdd;
+                    logLineStyle = (i % 2 == 0) ? LogLineStyleOne : LogLineStyleTwo;
                     if (i == SelectedCallstackFrame)
                     {
                         GUI.backgroundColor = Color.gray;
