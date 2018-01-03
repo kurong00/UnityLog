@@ -92,7 +92,7 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
             float logPanelHeight = CurrentTopPaneHeight + DrawPos.y;
             OnGUILogList(logPanelHeight);
             DrawPos.y += 10;
-            DrawLogDetails();
+            OnGUILogDetails();
         }
         GUILayout.EndVertical();
         DirtyLog = false;
@@ -404,7 +404,7 @@ public class XLogEditorWindow : EditorWindow, ILoggerWindow
     }
 
 
-    public void DrawLogDetails()
+    public void OnGUILogDetails()
     {
         var oldColor = GUI.backgroundColor;
         SelectedRenderLog = Mathf.Clamp(SelectedRenderLog, 0, CurrentLogList.Count);

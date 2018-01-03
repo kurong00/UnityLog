@@ -7,13 +7,15 @@ using System.Text.RegularExpressions;
 class XLogAppEditor : MonoBehaviour, ILogger
 {
     public int FontSize = 0;
+    public GUISkin Skin;
 
     List<LogInformation> LogList = new List<LogInformation>();
     int Errors = 0;
     int Warnings = 0;
     int Messages = 0;
-    int SelectedMessage = -1;
+    int SelectedRenderLog = -1;
     int SelectedCallstackFrame = 0;
+    double LastMessageClickTime = 0;
     bool PauseOnError = false;
     bool ShowTimes = false;
     Rect WindowRect;
@@ -32,6 +34,9 @@ class XLogAppEditor : MonoBehaviour, ILogger
     string CurrentChannel = null;
     string FilterRegex = "";
 
+    Vector2 LogListScrollPosition;
+    Vector2 LogDetailsScrollPosition;
+
     void Start()
     {
         DontDestroyOnLoad(gameObject);
@@ -49,12 +54,12 @@ class XLogAppEditor : MonoBehaviour, ILogger
         if (ShowWindow)
         {
             GUI.color = new Color(1, 1, 1, 0.5f);
-            /*LogLineStyle1 = new GUIStyle("CN StatusWarn");
-            LogLineStyle2 = new GUIStyle("CN StatusWarn");
-            SelectedLogLineStyle = new GUIStyle(XLogGUIConstans.XLOG_STYLE_LOG_LINE_THREE);
+            LogLineStyle1 = Skin.customStyles[0];
+            LogLineStyle2 = Skin.customStyles[1];
+            SelectedLogLineStyle = Skin.customStyles[2];
             LogLineStyle1.fontSize = FontSize;
             LogLineStyle2.fontSize = FontSize;
-            SelectedLogLineStyle.fontSize = FontSize;*/
+            SelectedLogLineStyle.fontSize = FontSize;/**/
             WindowRect = GUILayout.Window(1, WindowRect, DrawWindow, XLogGUIConstans.XLOG_EDITOR_NAME, GUI.skin.window);
         }
     }
@@ -66,7 +71,8 @@ class XLogAppEditor : MonoBehaviour, ILogger
             OnGUIToolBar();
             OnGUIFilter();
             OnGUIChannels();
-            //OnGUILogList(TopHeight);
+            OnGUILogList();
+            OnGUILogDetails();
         }
         GUILayout.EndVertical();
     }
@@ -153,10 +159,84 @@ class XLogAppEditor : MonoBehaviour, ILogger
         }
     }
 
+    void OnGUILogList()
+    {
+        var oldColor = GUI.backgroundColor;
+        SelectedRenderLog = Mathf.Clamp(SelectedRenderLog, 0, LogList.Count);
+        if (LogList.Count > 0 && SelectedRenderLog >= 0)
+        {
+            LogListScrollPosition = GUILayout.BeginScrollView(LogListScrollPosition);
+            var maxLogPanelHeight = WindowRect.height;
+            float buttonY = 0;
+            float buttonHeight = LogLineStyle1.CalcSize(new GUIContent("Test")).y;
+            Regex filterRegex = null;
+            if (!String.IsNullOrEmpty(FilterRegex))
+            {
+                filterRegex = new Regex(FilterRegex);
+            }
+            int drawnButtons = 0;
+            GUIStyle logLineStyle = LogLineStyle1;
+            for (int i = 0; i < LogList.Count; i++)
+            {
+                LogInformation log = LogList[i];
+                if (ShouldShowLog(filterRegex, log))
+                {
+                    drawnButtons++;
+                    if (buttonY + buttonHeight > LogListScrollPosition.y && buttonY < LogListScrollPosition.y + maxLogPanelHeight)
+                    {
+                        if (i == SelectedRenderLog)
+                        {
+                            logLineStyle = SelectedLogLineStyle;
+                        }
+                        else
+                        {
+                            logLineStyle = (drawnButtons % 2 == 0) ? LogLineStyle1 : LogLineStyle2;
+                        }
+
+                        var showMessage = log.Message;
+
+                        showMessage = showMessage.Replace(XLogger.DirectorySeparator, ' ');
+                        if (ShowTimes)
+                        {
+                            showMessage = log.RelativeTimeLine + ": " + showMessage;
+                        }
+
+                        var content = new GUIContent(showMessage, GetIconForLog(log));
+                        if (GUILayout.Button(content, logLineStyle, GUILayout.Height(buttonHeight)))
+                        {
+                            if (i == SelectedRenderLog)
+                            {
+                                if (Time.realtimeSinceStartup - LastMessageClickTime < 0.3f)
+                                {
+                                    LastMessageClickTime = 0;
+                                }
+                                else
+                                {
+                                    LastMessageClickTime = Time.realtimeSinceStartup;
+                                }
+                            }
+                            else
+                            {
+                                SelectedRenderLog = i;
+                                SelectedCallstackFrame = -1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        GUILayout.Space(buttonHeight);
+                    }
+                    buttonY += buttonHeight;
+                }
+            }
+            GUILayout.EndScrollView();
+        }
+        GUI.backgroundColor = oldColor;
+    }
     List<string> GetChannels()
     {
         var categories = new HashSet<string>();
-        foreach(LogInformation log in LogList)
+        foreach (LogInformation log in LogList)
         {
             if (!string.IsNullOrEmpty(log.Channel) && !categories.Contains(log.Channel))
                 categories.Add(log.Channel);
@@ -166,6 +246,74 @@ class XLogAppEditor : MonoBehaviour, ILogger
         channelList.Add(XLogGUIConstans.XLOG_CHANNEL_DEFAULT);
         channelList.AddRange(categories);
         return channelList;
+    }
+
+    Texture2D GetIconForLog(LogInformation log)
+    {
+        if (log.LogLevel == LogLevel.Error)
+        {
+            return ErrorIcon;
+        }
+        if (log.LogLevel == LogLevel.Warning)
+        {
+            return WarningIcon;
+        }
+
+        return MessageIcon;
+    }
+
+    bool ShouldShowLog(Regex regex, LogInformation log)
+    {
+        if (log.Channel == CurrentChannel || CurrentChannel == XLogGUIConstans.XLOG_CHANNEL_ALL ||
+            (CurrentChannel == XLogGUIConstans.XLOG_CHANNEL_DEFAULT && string.IsNullOrEmpty(log.Channel)))
+        {
+            if ((log.LogLevel == LogLevel.Message && ShowMessages)
+               || (log.LogLevel == LogLevel.Warning && ShowWarnings)
+               || (log.LogLevel == LogLevel.Error && ShowErrors))
+            {
+                if (regex == null || regex.IsMatch(log.Message))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void OnGUILogDetails()
+    {
+        var oldColor = GUI.backgroundColor;
+        SelectedRenderLog = Mathf.Clamp(SelectedRenderLog, 0, LogList.Count);
+        if (LogList.Count > 0 && SelectedRenderLog >= 0)
+        {
+            LogDetailsScrollPosition = GUILayout.BeginScrollView(LogDetailsScrollPosition);
+            var log = LogList[SelectedRenderLog];
+            var logLineStyle = LogLineStyle1;
+            for (int i = 0; i < log.StackFrameList.Count; i++)
+            {
+                var frame = log.StackFrameList[i];
+                var methodName = frame.FormatMethodNameByFile;
+                if (!String.IsNullOrEmpty(methodName))
+                {
+                    if (i == SelectedCallstackFrame)
+                    {
+                        logLineStyle = SelectedLogLineStyle;
+                    }
+                    else
+                    {
+                        logLineStyle = (i % 2 == 0) ? LogLineStyle1 : LogLineStyle2;
+                    }
+                    if (GUILayout.Button(methodName, logLineStyle))
+                    {
+                        SelectedCallstackFrame = i;
+                    }
+                }
+
+            }
+            GUILayout.EndScrollView();
+        }
+        GUI.backgroundColor = oldColor;
     }
 
     public void Log(LogInformation log)
@@ -198,7 +346,7 @@ class XLogAppEditor : MonoBehaviour, ILogger
     void ClearSelectedMessage()
     {
         SelectedCallstackFrame = -1;
-        SelectedMessage = -1;
+        SelectedRenderLog = -1;
     }
-    
+
 }

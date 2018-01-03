@@ -23,5 +23,6 @@ public class Test : MonoBehaviour
         XDebug.LogErrorChannel("Game", "I am a message fron channel: Game");
         XDebug.LogErrorChannel("Data", "I am a message fron channel: Data");
         XDebug.LogErrorChannel("Time", "I am a message fron channel: Time");
+
     }
 }
