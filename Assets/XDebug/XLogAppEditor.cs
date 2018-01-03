@@ -53,14 +53,14 @@ class XLogAppEditor : MonoBehaviour, ILogger
     {
         if (ShowWindow)
         {
-            GUI.color = new Color(1, 1, 1, 0.5f);
             LogLineStyle1 = Skin.customStyles[0];
             LogLineStyle2 = Skin.customStyles[1];
             SelectedLogLineStyle = Skin.customStyles[2];
             LogLineStyle1.fontSize = FontSize;
             LogLineStyle2.fontSize = FontSize;
             SelectedLogLineStyle.fontSize = FontSize;/**/
-            WindowRect = GUILayout.Window(1, WindowRect, DrawWindow, XLogGUIConstans.XLOG_EDITOR_NAME, GUI.skin.window);
+            WindowRect = GUILayout.Window(1, WindowRect, DrawWindow, 
+                XLogGUIConstans.XLOG_EDITOR_NAME, Skin.window);
         }
     }
 
