@@ -29,6 +29,10 @@ class XLogAppEditor : MonoBehaviour, ILogger
     Texture2D ErrorIcon;
     Texture2D WarningIcon;
     Texture2D MessageIcon;
+
+    Texture2D smallErrorIcon;
+    Texture2D smallWarningIcon;
+    Texture2D smallMessageIcon;
     bool ShowErrors = true;
     bool ShowWarnings = true;
     bool ShowMessages = true;
@@ -48,6 +52,13 @@ class XLogAppEditor : MonoBehaviour, ILogger
         ErrorIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_ERROR);
         WarningIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_WARNING);
         MessageIcon = EditorGUIUtility.FindTexture(XLogGUIConstans.XLOG_ICON_MESSAGE);
+
+        /*smallErrorIcon = EditorGUIUtility.FindTexture("console.infoicon.sml");
+        smallWarningIcon = EditorGUIUtility.FindTexture("console.warnicon.inactive.sml");
+        smallMessageIcon = EditorGUIUtility.FindTexture("console.erroricon.inactive.sml");*/
+        smallErrorIcon = EditorGUIUtility.FindTexture("sv_label_0");
+        smallWarningIcon = EditorGUIUtility.FindTexture("sv_label_4");
+        smallMessageIcon = EditorGUIUtility.FindTexture("sv_label_6");
     }
 
     public void OnGUI()
@@ -97,7 +108,7 @@ class XLogAppEditor : MonoBehaviour, ILogger
                 + EditorStyles.toolbarButton.CalcSize(warningToggleContent).x +
                 EditorStyles.toolbarButton.CalcSize(messageToggleContent).x;*/
 
-            GUILayout.BeginHorizontal(GUILayout.MaxWidth(100));
+            GUILayout.BeginHorizontal(GUILayout.MaxWidth(40));
             {
                 var showErrors = GUILayout.Toggle(ShowErrors, errorToggleContent, Skin.toggle);
                 var showWarnings = GUILayout.Toggle(ShowWarnings, warningToggleContent, Skin.toggle);
@@ -250,14 +261,14 @@ class XLogAppEditor : MonoBehaviour, ILogger
     {
         if (log.LogLevel == LogLevel.Error)
         {
-            return ErrorIcon;
+            return smallErrorIcon;
         }
         if (log.LogLevel == LogLevel.Warning)
         {
-            return WarningIcon;
+            return smallWarningIcon;
         }
 
-        return MessageIcon;
+        return smallMessageIcon;
     }
 
     bool ShouldShowLog(Regex regex, LogInformation log)
@@ -285,7 +296,7 @@ class XLogAppEditor : MonoBehaviour, ILogger
         SelectedRenderLog = Mathf.Clamp(SelectedRenderLog, 0, LogList.Count);
         if (LogList.Count > 0 && SelectedRenderLog >= 0)
         {
-            LogDetailsScrollPosition = GUILayout.BeginScrollView(LogDetailsScrollPosition);
+            LogDetailsScrollPosition = GUILayout.BeginScrollView(LogDetailsScrollPosition,Skin.scrollView);
             var log = LogList[SelectedRenderLog];
             var logLineStyle = LogLineStyle1;
             for (int i = 0; i < log.StackFrameList.Count; i++)
@@ -307,7 +318,8 @@ class XLogAppEditor : MonoBehaviour, ILogger
                         SelectedCallstackFrame = i;
                     }
                 }
-
+                else
+                    GUILayout.Space(40);
             }
             GUILayout.EndScrollView();
         }
