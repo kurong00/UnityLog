@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Text.RegularExpressions;
 
+[SerializeField]
 class XLogAppEditor : MonoBehaviour, ILogger
 {
     public int FontSize = 0;
@@ -60,7 +61,7 @@ class XLogAppEditor : MonoBehaviour, ILogger
             LogLineStyle2.fontSize = FontSize;
             SelectedLogLineStyle.fontSize = FontSize;/**/
             WindowRect = GUILayout.Window(1, WindowRect, DrawWindow, 
-                XLogGUIConstans.XLOG_EDITOR_NAME, Skin.window);
+               "", Skin.window);
         }
     }
 
@@ -83,26 +84,24 @@ class XLogAppEditor : MonoBehaviour, ILogger
         {
             GUILayout.BeginHorizontal();
             {
-                if (GUILayout.Button(XLogGUIConstans.XLOG_TOOLBAR_BUTTON_CLEAR, EditorStyles.toolbarButton))
+                if (GUILayout.Button(XLogGUIConstans.XLOG_TOOLBAR_BUTTON_CLEAR, Skin.button))
                     Clear();
                 ShowTimes = GUILayout.Toggle(ShowTimes, XLogGUIConstans.XLOG_TOOLBAR_TOGGLE_SHOW_TIMES,
-                    EditorStyles.toolbarButton);
+                    Skin.button);
             }
             GUILayout.EndHorizontal();
             GUIContent errorToggleContent = new GUIContent(Errors.ToString(), ErrorIcon);
             GUIContent warningToggleContent = new GUIContent(Warnings.ToString(), WarningIcon);
             GUIContent messageToggleContent = new GUIContent(Messages.ToString(), MessageIcon);
-            float totalErrorButtonWidth = EditorStyles.toolbarButton.CalcSize(errorToggleContent).x
+            /*float totalErrorButtonWidth = EditorStyles.toolbarButton.CalcSize(errorToggleContent).x
                 + EditorStyles.toolbarButton.CalcSize(warningToggleContent).x +
-                EditorStyles.toolbarButton.CalcSize(messageToggleContent).x;
+                EditorStyles.toolbarButton.CalcSize(messageToggleContent).x;*/
 
-            GUILayout.Space(20);
-
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal(GUILayout.MaxWidth(100));
             {
-                var showErrors = GUILayout.Toggle(ShowErrors, errorToggleContent, EditorStyles.toolbarButton);
-                var showWarnings = GUILayout.Toggle(ShowWarnings, warningToggleContent, EditorStyles.toolbarButton);
-                var showMessages = GUILayout.Toggle(ShowMessages, messageToggleContent, EditorStyles.toolbarButton);
+                var showErrors = GUILayout.Toggle(ShowErrors, errorToggleContent, Skin.toggle);
+                var showWarnings = GUILayout.Toggle(ShowWarnings, warningToggleContent, Skin.toggle);
+                var showMessages = GUILayout.Toggle(ShowMessages, messageToggleContent, Skin.toggle);
                 if (showErrors != ShowErrors || showWarnings != ShowWarnings || showMessages != ShowMessages)
                 {
                     ClearSelectedMessage();
@@ -120,10 +119,10 @@ class XLogAppEditor : MonoBehaviour, ILogger
         string filterRegex = null;
         GUILayout.BeginHorizontal();
         {
-            GUILayout.Label(XLogGUIConstans.XLOG_TOOLBAR_LABLE_FILTER, GUILayout.Width(40));
-            filterRegex = GUILayout.TextField(FilterRegex);
+            GUILayout.Label(XLogGUIConstans.XLOG_TOOLBAR_LABLE_FILTER, Skin.label);
+            filterRegex = GUILayout.TextField(FilterRegex,Skin.textField);
             if (GUILayout.Button(XLogGUIConstans.XLOG_TOOLBAR_BUTTON_CLEAR,
-                EditorStyles.miniButtonRight, GUILayout.Width(50)))
+                Skin.button, GUILayout.Width(50)))
             {
                 GUIUtility.keyboardControl = 0;
                 GUIUtility.hotControl = 0;
@@ -150,8 +149,7 @@ class XLogAppEditor : MonoBehaviour, ILogger
             }
         }
         var content = new GUIContent(" ");
-        var size = GUI.skin.button.CalcSize(content);
-        currentChannelIndex = GUILayout.SelectionGrid(currentChannelIndex, channels.ToArray(), channels.Count);
+        currentChannelIndex = GUILayout.SelectionGrid(currentChannelIndex, channels.ToArray(), channels.Count,Skin.button);
         if (CurrentChannel != channels[currentChannelIndex])
         {
             CurrentChannel = channels[currentChannelIndex];
@@ -165,7 +163,7 @@ class XLogAppEditor : MonoBehaviour, ILogger
         SelectedRenderLog = Mathf.Clamp(SelectedRenderLog, 0, LogList.Count);
         if (LogList.Count > 0 && SelectedRenderLog >= 0)
         {
-            LogListScrollPosition = GUILayout.BeginScrollView(LogListScrollPosition);
+            LogListScrollPosition = GUILayout.BeginScrollView(LogListScrollPosition,Skin.scrollView);
             var maxLogPanelHeight = WindowRect.height;
             float buttonY = 0;
             float buttonHeight = LogLineStyle1.CalcSize(new GUIContent("Test")).y;
